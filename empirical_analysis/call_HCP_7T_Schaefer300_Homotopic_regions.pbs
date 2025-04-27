@@ -1,0 +1,37 @@
+#!/bin/tcsh
+#PBS -j oe
+#PBS -l walltime=24:00:00
+#PBS -V
+
+##### Change to current working directory
+cd $PBS_O_WORKDIR
+
+# Load anaconda
+source /usr/physics/python/Anaconda3-2022.10/etc/profile.d/conda.csh
+
+# Activate pyspi environment
+conda activate pyspi
+
+##### Obtain Parameters from input.txt file using $PBS_ARRAY_INDEX as the line number #####
+
+# Check if user supplied a command-line argument
+if (! $?line_to_read) then
+    set line_to_read = $PBS_ARRAY_INDEX
+endif
+
+set subject_run=`sed -n "${line_to_read} p" $input_model_file`
+echo "Now running pyspi for $subject_run"
+
+# Call pyspi script
+set github_repo_root=/taiji1/abry4213/github/info_theory_visuals
+set input_data_path=/taiji1/abry4213/data/HCP/HCP_7T/
+
+#################################### pyspi ####################################
+
+# Pairwise
+python3 $github_repo_root/empirical_analysis/HCP_7T_Schaefer300_Homotopic_pairwise_infotheory.py \
+    --subject_run $subject_run \
+    --input_data_path $input_data_path \
+    --output_data_path $github_repo_root/data/ \
+    --SPI_subset $github_repo_root/data/infotheory_measures.yaml
+
