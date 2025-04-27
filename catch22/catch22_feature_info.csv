@@ -1,0 +1,23 @@
+﻿catch22_feature,Group,Group_number
+mode_5,Distributional,1
+mode_10,Distributional,1
+outlier_timing_pos,Extreme event timing,2
+outlier_timing_neg,Extreme event timing,2
+forecast_error,Simple forecasting,3
+embedding_dist,Embedding distance,4
+dfa,Self-affine scaling,5
+rs_range,Self-affine scaling,5
+stretch_high,Symbolic,6
+stretch_decreasing,Symbolic,6
+entropy_pairs,Symbolic,6
+transition_variance,Symbolic,6
+acf_timescale,Linear autocorrelation,7
+periodicity,Linear autocorrelation,7
+acf_first_min,Linear autocorrelation,7
+low_freq_power,Linear autocorrelation,7
+centroid_freq,Linear autocorrelation,7
+ami2,Nonlinear autocorrelation,8
+ami_timescale,Nonlinear autocorrelation,8
+trev,Nonlinear autocorrelation,8
+whiten_timescale,Incremental difference,9
+high_fluctuation,Incremental difference,9
