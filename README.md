@@ -18,7 +18,7 @@ Both are implemented in python, either directly (pyspi) or with a wrapper interf
 For our illustrative case study, we're working with resting-state BOLD fMRI data from one participant in the Human Connectome Project S1200 release (ID '298051', selected at random).
 This resting-state fMRI dataset was preprocessed in ['Timescales of spontaneous fMRI fluctuations relate to structural connectivity in the brain'](https://pmc.ncbi.nlm.nih.gov/articles/PMC7888482) by John Fallon et al. *Network Neuroscience* (2020), where details about imaging acquisition, preprocessing, and data availability are all described. 
 Here, we've used the 68-region [Desikan-Killiany](https://pubmed.ncbi.nlm.nih.gov/16530430/) cortical parcellation atlas, focusing on just one hemisphere (left) for simplicity.
-The resting-state fMRI time series data for this participant (68 regions $\times$ 1200 timepoints) is included in this repository under [`data/HCP_298051_rsfMRI_DesikanKilliany_TS.csv](https://github.com/anniegbryant/info_theory_visuals/blob/main/data/HCP_298051_rsfMRI_DesikanKilliany_TS.csv).
+The resting-state fMRI time series data for this participant (68 regions $\times$ 1200 timepoints) is included in this repository under [`data/HCP_298051_rsfMRI_DesikanKilliany_TS.csv`](https://github.com/anniegbryant/info_theory_visuals/blob/main/data/HCP_298051_rsfMRI_DesikanKilliany_TS.csv).
 
 This pipeline is modality-agnostic, meaning you can adapt this code to datasets of different spatial and/or temporal measurement scales, too.
 
