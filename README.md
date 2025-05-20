@@ -77,7 +77,7 @@ This is super useful for data wrangling between the two languages, though in its
 pip install rpy2
 ```
 
-Sometimes this can be a bit of a headache depending on your operating system; worst case, you can copy--paste code into Python/R separately from the Jupyter notebook (described below) if you can't get `rpy2` isntalled on your computer.
+Sometimes this can be a bit of a headache depending on your operating system; worst case, you can copy--paste code into Python/R separately from the Jupyter notebook (described below) if you can't get `rpy2` installed on your computer.
 
 
 ## 🏃‍♀️Running the code
