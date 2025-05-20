@@ -43,7 +43,7 @@ cd pyspi
 pip install .
 ```
 
-While you're in there, navigate to the folder `pyspi/pyspi/lib/jidt` and make sure you see the file `infodynamics.jar`. 
+While you're in there, navigate to the folder `pyspi/lib/jidt` and make sure you see the file `infodynamics.jar`. 
 That's the executable Java file for JIDT, which we'll call from python using jpype.
 
 That's pretty much it! 
