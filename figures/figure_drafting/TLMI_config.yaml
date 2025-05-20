@@ -1,0 +1,25 @@
+# Information-theoretic statistics
+.statistics.infotheory:
+
+  # Mutual information
+  TimeLaggedMutualInfo:
+    labels:
+      - directed
+      - nonlinear
+      - unsigned
+      - bivariate
+      - time-dependent
+    dependencies: 
+      - java
+    configs:
+      - estimator: gaussian
+
+      - estimator: kraskov
+        prop_k: 4
+
+      - estimator: kraskov
+        prop_k: 4
+        dyn_corr_excl: AUTO
+
+      - estimator: kernel
+        kernel_width: 0.25
