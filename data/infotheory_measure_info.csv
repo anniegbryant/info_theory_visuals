@@ -1,12 +1,12 @@
 ﻿Measure_name,Measure,Group,Group_number
-Time-lagged mutual information,tlmi_kraskov_NN-4,"Bivariate order-dependent, directed",6
-Causal conditioned entropy,cce_kozachenko,"Bivariate order-dependent, directed",6
-Directed information,di_kozachenko,"Bivariate order-dependent, directed",6
-Transfer entropy,te_kraskov_NN-4_k-1_kt-1_l-1_lt-1,"Bivariate order-dependent, directed",6
-Granger causality,gc_gaussian_k-1_kt-1_l-1_lt-1,"Bivariate order-dependent, directed",6
-Stochastic interaction,si_kozachenko_k-1,"Bivariate order-dependent, undirected",5
-Conditional entropy,ce_kozachenko,"Bivariate order-independent, directed",3
-Joint entropy,je_kozachenko,"Bivariate order-independent, undirected",2
-Mutual information,mi_kraskov_NN-4,"Bivariate order-independent, undirected",2
-Active information storage,AIS_kraskov,Univariate order-dependent,4
-Entropy,entropy_kozachenko,Univariate order-independent,1
+Time-lagged mutual information,tlmi_kraskov_NN-4,"Pairwise order-dependent, directed",6
+Causal conditioned entropy,cce_kozachenko,"Pairwise order-dependent, directed",6
+Directed information,di_kozachenko,"Pairwise order-dependent, directed",6
+Transfer entropy,te_kraskov_NN-4_k-1_kt-1_l-1_lt-1,"Pairwise order-dependent, directed",6
+Granger causality,gc_gaussian_k-1_kt-1_l-1_lt-1,"Pairwise order-dependent, directed",6
+Stochastic interaction,si_kozachenko_k-1,"Pairwise order-dependent, undirected",5
+Conditional entropy,ce_kozachenko,"Pairwise order-independent, directed",3
+Joint entropy,je_kozachenko,"Pairwise order-independent, undirected",2
+Mutual information,mi_kraskov_NN-4,"Pairwise order-independent, undirected",2
+Active information storage,AIS_kraskov,Single-process order-dependent,4
+Entropy,entropy_kozachenko,Single-process order-independent,1

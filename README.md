@@ -1,6 +1,6 @@
 # Information-theoretic time series measures tutorial
 
-<img src="figures/Draft_InfoTheory_Visuals.png" width="75%">
+<img src="figures/Draft_InfoTheory_Visuals.png" width="65%">
 
 This repository is designed as a simple guide to computing information-theoretic time-series measures covered in our (preprinted) review, ['Unifying concepts in information-theoretic time-series analysis'](https://arxiv.org/abs/2505.13080).
 
@@ -13,7 +13,7 @@ Both are implemented in python, either directly (pyspi) or with a wrapper interf
 
 ## About the dataset in this guide
 
-<img src="figures/process_vs_realization.png" width="85%">
+<img src="figures/process_vs_realization.png" width="70%">
 
 For our illustrative case study, we're working with resting-state BOLD fMRI data from one participant in the Human Connectome Project S1200 release (ID '298051', selected at random).
 This resting-state fMRI dataset was preprocessed in ['Timescales of spontaneous fMRI fluctuations relate to structural connectivity in the brain'](https://pmc.ncbi.nlm.nih.gov/articles/PMC7888482) by John Fallon et al. *Network Neuroscience* (2020), where details about imaging acquisition, preprocessing, and data availability are all described. 
@@ -63,11 +63,11 @@ If you would like to generate the same type of cortical surface visuals in our p
 
 <img src="figures/All_measures_brain_maps.png" width="75%">
 
-You'll need to have a working installation of [R](https://www.r-project.org/) and the packages [`tidyverse`](https://github.com/tidyverse) and [`ggseg`](https://github.com/ggseg/ggseg).
+You'll need to have a working installation of [R](https://www.r-project.org/) and the packages [`tidyverse`](https://github.com/tidyverse), [`ggseg`](https://github.com/ggseg/ggseg), [`cowplot`](https://github.com/wilkelab/cowplot), and [`patchwork`](https://github.com/thomasp85/patchwork) packages.
 They can be installed within R from the terminal (including the one within RStudio) using: 
 
 ```R 
-install.packages(c('tidyverse', 'ggseg'))
+install.packages(c('tidyverse', 'ggseg', 'cowplot', 'patchwork'))
 ```
 
 If you want to interactively run the data visualization code in this repository, please note that we've included both python and R code in one Jupyter notebook.
