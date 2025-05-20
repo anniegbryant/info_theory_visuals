@@ -35,17 +35,15 @@ random.seed(127)
 random.seed(127)
 
 # Define data directory
-input_data_dir = "/Users/abry4213/github/Directed_information_fMRI/data/numpy_arrays/"
-output_data_dir = "/Users/abry4213/github/info_theory_visuals/data"
 
 # Define configuration file
-infotheory_config_file = f"{output_data_dir}/infotheory_measures.yaml"
+infotheory_config_file = "data/infotheory_measures.yaml"
 
 # Load SPI groupings
-infotheory_measure_info = pd.read_csv(f"{output_data_dir}/infotheory_measure_info.csv")
+infotheory_measure_info = pd.read_csv("data/infotheory_measure_info.csv")
 
 # Read in brain regions
-brain_region_lookup = pd.read_csv(f"{output_data_dir}/Brain_Region_info.csv", index_col=False).reset_index(drop=True)
+brain_region_lookup = pd.read_csv("data/Brain_Region_info.csv", index_col=False).reset_index(drop=True)
 base_regions = list(set(brain_region_lookup.Base_Region.tolist()))
 source_base_region = "lateraloccipital"
 
@@ -65,12 +63,13 @@ AIScalc.initialise()
 # Add observations
 AIScalc.setProperty("NORMALISE", "true")
 
-def compute_info_theory_SPIs_for_subject(subject_ID, input_data_dir, output_data_dir, basecalc, brain_region_lookup, source_base_region="lateraloccipital"):
-    if os.path.isfile(f"{output_data_dir}/fMRI_HCP_{subject_ID}_infotheory_measures.csv"):
+def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_lookup, source_base_region="lateraloccipital"):
+    output_file = f"data/HCP_{subject_ID}_rsfMRI_infotheory_measures.csv"
+    if os.path.isfile(output_file):
         return 
     
     # Load the subject time series data
-    subject_data = np.load(f"{input_data_dir}/{subject_ID}.npy")
+    subject_data = pd.read_csv(f"data/HCP_{subject_ID}_rsfMRI_DesikanKilliany_TS.csv").values
 
     # Extract the 34 base cortical regions
     base_regions = list(set(brain_region_lookup.Base_Region.tolist()))
@@ -80,7 +79,7 @@ def compute_info_theory_SPIs_for_subject(subject_ID, input_data_dir, output_data
 
     # Extract the time series for the base region
     source_index = brain_region_lookup.query("Base_Region == @source_base_region & Hemisphere == 'Left'").Region_Index.tolist()[0]
-    source_TS = subject_data[source_index,:]
+    source_TS = subject_data[:, source_index]
 
     # z-score the time series
     source_TS = zscore(source_TS)
@@ -123,7 +122,7 @@ def compute_info_theory_SPIs_for_subject(subject_ID, input_data_dir, output_data
         print("Target index: ", target_index)
 
         # Subset the subject_data numpy array to just target_index
-        target_TS = subject_data[target_index,:]
+        target_TS = subject_data[:, target_index]
 
         # z-score the time series
         target_TS = zscore(target_TS)
@@ -190,12 +189,12 @@ def compute_info_theory_SPIs_for_subject(subject_ID, input_data_dir, output_data
     this_subject_infotheory_results = pd.concat(this_subject_infotheory_results_list)
 
     # Save to a CSV file
-    this_subject_infotheory_results.to_csv(f"{output_data_dir}/fMRI_HCP_{subject_ID}_infotheory_measures.csv", index=False)
+    this_subject_infotheory_results.to_csv(output_file, index=False)
 
 
 # Compute info theory measures for a specific subject
 subject_ID = "298051"
-compute_info_theory_SPIs_for_subject(subject_ID, input_data_dir, output_data_dir, basecalc, brain_region_lookup, source_base_region=source_base_region)
+compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_lookup, source_base_region=source_base_region)
 
 # Shut down the JVM at the end of session
 jpype.shutdownJVM() 
