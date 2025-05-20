@@ -50,12 +50,12 @@ source_base_region = "lateraloccipital"
 # Initialise a Calculator object with this configuration file
 basecalc = Calculator(configfile=infotheory_config_file)
 
-# Create a Gaussian entropy calculator
+# Create a Shannon entropy calculator with a Kozachenko--Leonenko ('kozachenko') density estimator
 entropy_calcClass = jpype.JPackage("infodynamics.measures.continuous.kozachenko").EntropyCalculatorMultiVariateKozachenko
 entropy_calc = entropy_calcClass()
 entropy_calc.initialise()
 
-# Create an Active Information Storage calculator with KSG (Kraskov) density estimator
+# Create an Active Information Storage calculator with KSG ('kraskov') density estimator
 AIScalcClass = jpype.JPackage("infodynamics.measures.continuous.kraskov").ActiveInfoStorageCalculatorKraskov
 AIScalc = AIScalcClass()
 AIScalc.initialise()
@@ -77,7 +77,7 @@ def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_look
     # Create a list to store results
     this_subject_infotheory_results_list = []
 
-    # Extract the time series for the base region
+    # Extract the time series for the base region in the left hemisphere
     source_index = brain_region_lookup.query("Base_Region == @source_base_region & Hemisphere == 'Left'").Region_Index.tolist()[0]
     source_TS = subject_data[:, source_index]
 
@@ -87,25 +87,25 @@ def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_look
     # Convert to Java array
     source_TS_Array = jpype.JArray(jpype.JDouble)([float(x) for x in source_TS])
 
-    # Compute entropy for the source region
+    # Compute Shannon entropy for this region
     source_entropy_calc = deepcopy(entropy_calc)
     source_entropy_calc.setObservations(source_TS_Array)
     source_entropy = source_entropy_calc.computeAverageLocalOfObservations()
 
-    # Compute AIS for the source region
+    # Compute AIS for this region
     source_AIS_calc = deepcopy(AIScalc)
     source_AIS_calc.setObservations(source_TS_Array)
     source_AIS = source_AIS_calc.computeAverageLocalOfObservations()
 
     # Add to dataframe
-    univariate_dataframe_res = (pd.DataFrame({"Measure": ["entropy_kozachenko", "AIS_kraskov"],
+    single_process_dataframe_res = (pd.DataFrame({"Measure": ["entropy_kozachenko", "AIS_kraskov"],
                                                 "region_from": [source_base_region, source_base_region],
                                                 "region_to": [source_base_region, source_base_region],
-                                                "Measure_Type": ["Univariate", "Univariate"],
+                                                "Measure_Type": ["Single-process", "Single-process"],
                                                 "value": [source_entropy, source_AIS]})
                                                 .assign(Base_Region = source_base_region,
                                                         Sample_ID = subject_ID))
-    this_subject_infotheory_results_list.append(univariate_dataframe_res)
+    this_subject_infotheory_results_list.append(single_process_dataframe_res)
 
     # Iterate over the base regions as the target regions
     for target_base_region in base_regions:
@@ -130,7 +130,7 @@ def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_look
         # Convert to Java array
         target_TS_Array = jpype.JArray(jpype.JDouble)([float(x) for x in target_TS])
 
-        ################# Univariate #################
+        ################# Single-process #################
         # Compute entropy for the target region
         target_entropy_calc = deepcopy(entropy_calc)
         target_entropy_calc.setObservations(target_TS_Array)
@@ -141,17 +141,17 @@ def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_look
         target_AIS_calc.setObservations(target_TS_Array)
         target_AIS = target_AIS_calc.computeAverageLocalOfObservations()
 
-        # Compute univariate measures for the target region
-        univariate_dataframe_res = (pd.DataFrame({"Measure": ["entropy_kozachenko", "AIS_kraskov"],
+        # Compile single-process measures for the target region
+        single_process_measure_dataframe_res = (pd.DataFrame({"Measure": ["entropy_kozachenko", "AIS_kraskov"],
                                                     "region_from": [target_base_region, target_base_region],
                                                     "region_to": [target_base_region, target_base_region],
-                                                    "Measure_Type": ["Univariate", "Univariate"],
+                                                    "Measure_Type": ["Single-process", "Single-process"],
                                                     "value": [target_entropy, target_AIS]})
                                                     .assign(Base_Region = target_base_region,
                                                             Sample_ID = subject_ID))
-        this_subject_infotheory_results_list.append(univariate_dataframe_res)
+        this_subject_infotheory_results_list.append(single_process_measure_dataframe_res)
 
-        ################# Bivariate #################
+        ################# Pairwise #################
         source_TS = source_TS.reshape(1, -1)
         target_TS = target_TS.reshape(1, -1)
 
@@ -178,7 +178,7 @@ def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_look
                                 region_to=lambda x: x['region_to'].replace({'proc-0': source_base_region, 'proc-1': target_base_region}))
                         .query("region_from == @source_base_region & region_to == @target_base_region") 
                         .assign(Sample_ID = subject_ID,
-                                Measure_Type = "Bivariate",
+                                Measure_Type = "Pairwise",
                                 Measure = SPIs)
         )
         
