@@ -38,6 +38,7 @@ random.seed(127)
 
 # Define configuration file
 infotheory_config_file = "data/infotheory_measures.yaml"
+infotheory_config_file_gaussian = "data/infotheory_measures_gaussian.yaml"
 
 # Load SPI groupings
 infotheory_measure_info = pd.read_csv("data/infotheory_measure_info.csv")
@@ -49,22 +50,33 @@ source_base_region = "lateraloccipital"
 
 # Initialise a Calculator object with this configuration file
 basecalc = Calculator(configfile=infotheory_config_file)
+basecalc_gaussian = Calculator(configfile=infotheory_config_file_gaussian)
 
 # Create a Shannon entropy calculator with a Kozachenko--Leonenko ('kozachenko') density estimator
 entropy_calcClass = jpype.JPackage("infodynamics.measures.continuous.kozachenko").EntropyCalculatorMultiVariateKozachenko
 entropy_calc = entropy_calcClass()
 entropy_calc.initialise()
 
+entropy_calcClass_gauss = jpype.JPackage("infodynamics.measures.continuous.gaussian").EntropyCalculatorMultiVariateGaussian
+entropy_calc_gauss = entropy_calcClass_gauss()
+entropy_calc_gauss.initialise()
+
 # Create an Active Information Storage calculator with KSG ('kraskov') density estimator
 AIScalcClass = jpype.JPackage("infodynamics.measures.continuous.kraskov").ActiveInfoStorageCalculatorKraskov
 AIScalc = AIScalcClass()
 AIScalc.initialise()
-
-# Add observations
+# Set to normalize
 AIScalc.setProperty("NORMALISE", "true")
 
-def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_lookup, source_base_region="lateraloccipital"):
-    output_file = f"data/HCP_{subject_ID}_rsfMRI_infotheory_measures.csv"
+AIScalcClass_gauss = jpype.JPackage("infodynamics.measures.continuous.gaussian").ActiveInfoStorageCalculatorGaussian
+AIScalc_gauss = AIScalcClass_gauss()
+AIScalc_gauss.initialise()
+# Set to normalize
+AIScalc_gauss.setProperty("NORMALISE", "true")
+
+
+def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_lookup, output_file, source_base_region="lateraloccipital"):
+    # output_file = f"data/HCP_{subject_ID}_rsfMRI_infotheory_measures.csv"
     if os.path.isfile(output_file):
         return 
     
@@ -92,17 +104,27 @@ def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_look
     source_entropy_calc.setObservations(source_TS_Array)
     source_entropy = source_entropy_calc.computeAverageLocalOfObservations()
 
+    # Entropy, Gaussian
+    source_entropy_calc_gauss = deepcopy(entropy_calc_gauss)
+    source_entropy_calc_gauss.setObservations(source_TS_Array)
+    source_entropy_gauss = source_entropy_calc_gauss.computeAverageLocalOfObservations()
+
     # Compute AIS for this region
     source_AIS_calc = deepcopy(AIScalc)
     source_AIS_calc.setObservations(source_TS_Array)
     source_AIS = source_AIS_calc.computeAverageLocalOfObservations()
 
+    # AIS, Gaussian
+    source_AIS_calc_gauss = deepcopy(AIScalc_gauss)
+    source_AIS_calc_gauss.setObservations(source_TS_Array)
+    source_AIS_gauss = source_AIS_calc_gauss.computeAverageLocalOfObservations()
+
     # Add to dataframe
-    single_process_dataframe_res = (pd.DataFrame({"Measure": ["entropy_kozachenko", "AIS_kraskov"],
-                                                "region_from": [source_base_region, source_base_region],
-                                                "region_to": [source_base_region, source_base_region],
-                                                "Measure_Type": ["Single-process", "Single-process"],
-                                                "value": [source_entropy, source_AIS]})
+    single_process_dataframe_res = (pd.DataFrame({"Measure": ["entropy_kozachenko", "entropy_gaussian", "AIS_kraskov", "AIS_gaussian"],
+                                                "region_from": [source_base_region, source_base_region, source_base_region, source_base_region],
+                                                "region_to": [source_base_region, source_base_region, source_base_region, source_base_region],
+                                                "Measure_Type": ["Single-process", "Single-process", "Single-process", "Single-process"],
+                                                "value": [source_entropy, source_entropy_gauss, source_AIS, source_AIS_gauss]})
                                                 .assign(Base_Region = source_base_region,
                                                         Sample_ID = subject_ID))
     this_subject_infotheory_results_list.append(single_process_dataframe_res)
@@ -136,17 +158,25 @@ def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_look
         target_entropy_calc.setObservations(target_TS_Array)
         target_entropy = target_entropy_calc.computeAverageLocalOfObservations()
 
+        target_entropy_calc_gauss = deepcopy(entropy_calc_gauss)
+        target_entropy_calc_gauss.setObservations(target_TS_Array)
+        target_entropy_gauss = target_entropy_calc_gauss.computeAverageLocalOfObservations()
+
         # Compute AIS for the target region
         target_AIS_calc = deepcopy(AIScalc)
         target_AIS_calc.setObservations(target_TS_Array)
         target_AIS = target_AIS_calc.computeAverageLocalOfObservations()
 
+        target_AIS_calc_gauss = deepcopy(AIScalc_gauss)
+        target_AIS_calc_gauss.setObservations(target_TS_Array)
+        target_AIS_gauss = target_AIS_calc_gauss.computeAverageLocalOfObservations()
+
         # Compile single-process measures for the target region
-        single_process_measure_dataframe_res = (pd.DataFrame({"Measure": ["entropy_kozachenko", "AIS_kraskov"],
-                                                    "region_from": [target_base_region, target_base_region],
-                                                    "region_to": [target_base_region, target_base_region],
-                                                    "Measure_Type": ["Single-process", "Single-process"],
-                                                    "value": [target_entropy, target_AIS]})
+        single_process_measure_dataframe_res = (pd.DataFrame({"Measure": ["entropy_kozachenko", "entropy_gaussian", "AIS_kraskov", "AIS_gaussian"],
+                                                    "region_from": [target_base_region, target_base_region, target_base_region, target_base_region],
+                                                    "region_to": [target_base_region, target_base_region, target_base_region, target_base_region],
+                                                    "Measure_Type": ["Single-process", "Single-process", "Single-process", "Single-process"],
+                                                    "value": [target_entropy, target_entropy_gauss, target_AIS, target_AIS_gauss]})
                                                     .assign(Base_Region = target_base_region,
                                                             Sample_ID = subject_ID))
         this_subject_infotheory_results_list.append(single_process_measure_dataframe_res)
@@ -194,7 +224,12 @@ def compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_look
 
 # Compute info theory measures for a specific subject
 subject_ID = "298051"
-compute_info_theory_SPIs_for_subject(subject_ID, basecalc, brain_region_lookup, source_base_region=source_base_region)
+compute_info_theory_SPIs_for_subject(subject_ID, basecalc, output_file = f"data/HCP_{subject_ID}_rsfMRI_infotheory_measures.csv",
+                                      brain_region_lookup=brain_region_lookup, source_base_region=source_base_region)
+
+# Also compute Gaussian
+compute_info_theory_SPIs_for_subject(subject_ID, basecalc_gaussian, output_file = f"data/HCP_{subject_ID}_rsfMRI_infotheory_measures_gaussian.csv",
+                                     brain_region_lookup=brain_region_lookup, source_base_region=source_base_region)
 
 # Shut down the JVM at the end of session
 jpype.shutdownJVM() 

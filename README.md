@@ -1,6 +1,6 @@
 # Information-theoretic time series measures tutorial
 
-<img src="figures/Draft_InfoTheory_Visuals.png" width="65%">
+<img src="figures/All_info_theory_measures.png" width="65%">
 
 This repository is designed as a simple guide to computing information-theoretic time-series measures covered in our (preprinted) review, ['Unifying concepts in information-theoretic time-series analysis'](https://arxiv.org/abs/2505.13080).
 
